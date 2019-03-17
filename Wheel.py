@@ -79,7 +79,7 @@ class Rear_Wheel(object):
 def test_wheel():
 	
 	speed = 100  #Values from 0 to 100
-	wait = 1
+	wait = 0.5
 	
 	left_PCAchannel = 5  #Values from 0 to 15
 	left_pin = 17 #Left wheel = 17; right wheel = 27
