@@ -1,17 +1,10 @@
-''' 
-To do:
-	- Identificar automaticamente la direccion de i2c.
-	- 
-
-
-'''
 
 import smbus
 import time
 import math
 import os
 import RPi.GPIO as GPIO
-
+import sys
 
 
 debug_info = os.path.basename(__file__)
@@ -28,8 +21,8 @@ class Controller(object):
 			print debug_info, 'Debug set on'
 		else:
 			print debug_info, 'Debug set off'
-		
-	
+
+
 	def set_value(self, channel, value):
 		'''Write the given value to a specific channel'''
 
@@ -40,28 +33,43 @@ class Controller(object):
 		self.bus.write_byte_data(self.address, reg[2], value & 0xFF)
 		self.bus.write_byte_data(self.address, reg[3], value >> 8)
 		
+		written_values = [None]*4
+		
+		for i in range(0, 4):
+			written_values[i] = self.bus.read_byte_data(self.address, reg[i])
+		
 		if self.debug:
 			print debug_info, 'Channel: ', channel
 			for i in range (0, 4):
-				print debug_info, 'Value ', self.bus.read_byte_data(self.address, reg[i]), 'written to register ', reg[i]
-		
+				print debug_info, 'Value ', written_values[i], 'written to register ', reg[i]
+				
+		return written_values
 		
 	def get_register(self, channel):
 		'''Get the register according to the given values in the PCA9685 spec'''
 		reg = [None]*4
-		for i in range(0,4):			
-			reg[i] = 6+i+4*channel		
-		return reg
-
+		if 0 <= channel <= 15:
+			for i in range(0,4):			
+				reg[i] = 6+i+4*channel		
+			return reg
+		else:
+			print 'Channel must be a value between 0 and 15'
+			print 'Stopping all channels'
+			for channel in range(0, 15):
+				self.set_value(channel, 0)
+			reg[0] = 'Wrong channel'
+			sys.exit()
+			
+				
 
 		
 		
 def test_controller():
-	min_value = 4000 #Values from 0 to 4095
+	min_value = 4090 #Values from 0 to 4095
 	max_value = 4095 #Values from 0 to 4095
 	
-	start_channel = 4 #Values from 0 to 15
-	end_channel = 5 #Values from 0 to 15
+	start_channel = 15 #Values from 0 to 15
+	end_channel = 16 #Values from 0 to 15
 	
 	print 'Changing values from ', min_value, ' to ', max_value, ' for channels ', start_channel, ' to ', end_channel
 	
