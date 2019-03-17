@@ -9,7 +9,7 @@ class TestController(unittest.TestCase):
 	def test_get_register(self):
 		'''Calculated values are equal to the ones given in spec'''
 		print (sys.version)
-		test_controller = Controller.Controller()
+		test_controller = Controller.Controller(debug = True)
 		channel0 = [6, 7, 8, 9]
 		channel1 = [10, 11, 12, 13]		
 		channel2 = [14, 15, 16, 17]
@@ -40,23 +40,23 @@ class TestController(unittest.TestCase):
 	def test_get_register_wrong_channel_high(self):
 		'''Invalid channel number '''
 		channel = randint(16, 100)
-		test_controller = Controller.Controller()
+		test_controller = Controller.Controller(debug = True)
 		with self.assertRaises(SystemExit) as cm:
 			result = test_controller.get_register(channel)
-			self.assertEqual(cm.exception, None)
+		self.assertEqual(cm.exception.code, None)	
 			
 	def test_get_register_wrong_channel_low(self):
 		'''Invalid channel number '''
 		channel = randint(-5, -1)
-		test_controller = Controller.Controller()
+		test_controller = Controller.Controller(debug = True)
 		with self.assertRaises(SystemExit) as cm:
 			result = test_controller.get_register(channel)
-			self.assertEqual(cm.exception, None)
+		self.assertEqual(cm.exception.code, None)	
 
 			
 	def test_set_value(self):
 		'''Try some values in each channel'''
-		test_controller = Controller.Controller()
+		test_controller = Controller.Controller(debug = True)
 		result = [None]*2
 		for channel in range (0, 16):
 			for i in range(0, 10):
@@ -71,39 +71,39 @@ class TestController(unittest.TestCase):
 	
 	def test_set_value_wrong_value_high(self):
 		'''Invalid PWM number number '''
-		test_controller = Controller.Controller()
+		test_controller = Controller.Controller(debug = True)
 		channel = randint(0, 15)
 		value = randint(4096, 5000)
 		with self.assertRaises(SystemExit) as cm:
 			result = test_controller.set_value(channel, value)
-			self.assertEqual(cm.exception, None)
+		self.assertEqual(cm.exception.code, None)	
 
 	def test_set_value_wrong_value_low(self):
 		'''Invalid PWM number number '''
-		test_controller = Controller.Controller()
+		test_controller = Controller.Controller(debug = True)
 		channel = randint(0, 15)
 		value = randint(-500, -1)
 		with self.assertRaises(SystemExit) as cm:
 			result = test_controller.set_value(channel, value)
-			self.assertEqual(cm.exception, None)
+		self.assertEqual(cm.exception.code, None)	
 			
 	def test_set_value_wrong_channel_high(self):
 		'''Invalid channel number '''
-		test_controller = Controller.Controller()
+		test_controller = Controller.Controller(debug = True)
 		channel = randint(16, 100)
 		value = randint(0, 4095)
 		with self.assertRaises(SystemExit) as cm:
 			result = test_controller.set_value(channel, value)
-			self.assertEqual(cm.exception, None)
+		self.assertEqual(cm.exception.code, None)	
 			
 	def test_set_value_wrong_channel_low(self):
 		'''Invalid channel number '''
-		test_controller = Controller.Controller()
+		test_controller = Controller.Controller(debug = True)
 		channel = randint(-5, -1)
 		value = randint(0, 4095)
 		with self.assertRaises(SystemExit) as cm:
 			result = test_controller.set_value(channel, value)
-			self.assertEqual(cm.exception, None)			
+		self.assertEqual(cm.exception.code, None)			
 
 			
 if __name__ == '__main__':
