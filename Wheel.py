@@ -1,10 +1,3 @@
-''' 
-To do:
-	- Debug.
-	- 
-
-
-'''
 
 from Controller import Controller
 import time
@@ -35,16 +28,16 @@ class Rear_Wheel(object):
 			value = 40.95*speed
 		else:
 			value = 0
-			print 'Speed values must be between 0 and 100'
+			print ('Speed values must be between 0 and 100')
 			
 			if self.debug:
-				print debug_info, 'Exiting program due to invalid speed value'
+				print (debug_info, 'Exiting program due to invalid speed value')
 			GPIO.cleanup()
 			exit()
 			
 		value = int(value)
 		if self.debug:
-			print debug_info, 'Speed ', speed, 'converted to ', value
+			print (debug_info, 'Speed ', speed, 'converted to ', value)
 		
 		return value		
 
@@ -56,7 +49,7 @@ class Rear_Wheel(object):
 		value = self.speed_converter(speed)
 		self.controller.set_value(self.PCAchannel, value)
 		if self.debug:
-			print debug_info, 'Wheel connected to pin', self.pin, 'in the Raspberry Pi GPIO and channel', self.PCAchannel,'in the PCA9685 is moving forwards at speed', speed
+			print (debug_info, 'Wheel connected to pin', self.pin, 'in the Raspberry Pi GPIO and channel', self.PCAchannel,'in the PCA9685 is moving forwards at speed', speed)
 		
 	def backwards(self, speed):
 		'''Sets the movement of the wheel backwards to a given speed'''
@@ -64,13 +57,13 @@ class Rear_Wheel(object):
 		value = self.speed_converter(speed)
 		self.controller.set_value(self.PCAchannel, value)
 		if self.debug:
-			print debug_info, 'Wheel connected to pin', self.pin, 'in the Raspberry Pi GPIO and channel', self.PCAchannel,'in the PCA9685 is moving backwards at speed', speed
+			print (debug_info, 'Wheel connected to pin', self.pin, 'in the Raspberry Pi GPIO and channel', self.PCAchannel,'in the PCA9685 is moving backwards at speed', speed)
 		
 	def stop(self):	
 		'''Stops the wheel'''	
 		self.controller.set_value(self.PCAchannel, 0)		
 		if self.debug:
-			print debug_info, 'Wheel connected to pin', self.pin, 'in the Raspberry Pi GPIO and channel', self.PCAchannel,'in the PCA9685 has stopped'
+			print (debug_info, 'Wheel connected to pin', self.pin, 'in the Raspberry Pi GPIO and channel', self.PCAchannel,'in the PCA9685 has stopped')
 		
 		
 
@@ -105,11 +98,11 @@ def test_wheel():
 		GPIO.cleanup()
 		
 	except KeyboardInterrupt:
-		print 'Stopping wheels'
+		print ('Stopping wheels')
 		left_wheel.stop()
 		right_wheel.stop()
 		GPIO.cleanup()
-		print 'Test interrupted by user'
+		print ('Test interrupted by user')
 					
 					
 					
@@ -117,7 +110,7 @@ def test_wheel():
 if __name__ == '__main__':
 
 	debug = True
-	print 'Testing file ', debug_info	
-	print 'Testing Wheel class'
+	print ('Testing file ', debug_info)
+	print ('Testing Wheel class')
 	test_wheel()
 	
