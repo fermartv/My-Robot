@@ -1,15 +1,15 @@
 import unittest
 import Controller
-from random import randint
+import random
 import sys
 
 class TestController(unittest.TestCase):
-
+	debug = False
 
 	def test_get_register(self):
 		'''Calculated values are equal to the ones given in spec'''
 		print (sys.version)
-		test_controller = Controller.Controller(debug = True)
+		test_controller = Controller.Controller(debug = self.debug)
 		channel0 = [6, 7, 8, 9]
 		channel1 = [10, 11, 12, 13]		
 		channel2 = [14, 15, 16, 17]
@@ -39,16 +39,16 @@ class TestController(unittest.TestCase):
 	
 	def test_get_register_wrong_channel_high(self):
 		'''Invalid channel number '''
-		channel = randint(16, 100)
-		test_controller = Controller.Controller(debug = True)
+		channel = random.randint(16, 100)
+		test_controller = Controller.Controller(debug = self.debug)
 		with self.assertRaises(SystemExit) as cm:
 			result = test_controller.get_register(channel)
 		self.assertEqual(cm.exception.code, None)	
 			
 	def test_get_register_wrong_channel_low(self):
 		'''Invalid channel number '''
-		channel = randint(-5, -1)
-		test_controller = Controller.Controller(debug = True)
+		channel = random.randint(-5, -1)
+		test_controller = Controller.Controller(debug = self.debug)
 		with self.assertRaises(SystemExit) as cm:
 			result = test_controller.get_register(channel)
 		self.assertEqual(cm.exception.code, None)	
@@ -56,11 +56,11 @@ class TestController(unittest.TestCase):
 			
 	def test_set_duty_cycle(self):
 		'''Try some duty_cycles in each channel'''
-		test_controller = Controller.Controller(debug = True)
+		test_controller = Controller.Controller(debug = self.debug)
 		result = [None]*2
 		for channel in range (0, 16):
-			for i in range(0, 10):
-				duty_cycle = randint(0, 4095)
+			for i in range(0, 10): #Test 10 different values for each channel
+				duty_cycle = random.randint(0, 4095)
 				with self.subTest(duty_cycle = duty_cycle):
 					written_values = test_controller.set_duty_cycle(channel, duty_cycle)
 					result = [written_values[0]+256*written_values[1],written_values[2]+256*written_values[3]] #duty_cycle = (Low byte) + (High byte)*256
@@ -71,39 +71,50 @@ class TestController(unittest.TestCase):
 	
 	def test_set_duty_cycle_wrong_value_high(self):
 		'''Invalid PWM number number '''
-		test_controller = Controller.Controller(debug = True)
-		channel = randint(0, 15)
-		duty_cycle = randint(4096, 5000)
+		test_controller = Controller.Controller(debug = self.debug)
+		channel = random.randint(0, 15)
+		duty_cycle = random.randint(4096, 5000)
 		with self.assertRaises(SystemExit) as cm:
 			result = test_controller.set_duty_cycle(channel, duty_cycle)
 		self.assertEqual(cm.exception.code, None)	
 
 	def test_set_duty_cycle_wrong_value_low(self):
 		'''Invalid PWM number number '''
-		test_controller = Controller.Controller(debug = True)
-		channel = randint(0, 15)
-		duty_cycle = randint(-500, -1)
+		test_controller = Controller.Controller(debug = self.debug)
+		channel = random.randint(0, 15)
+		duty_cycle = random.randint(-500, -1)
 		with self.assertRaises(SystemExit) as cm:
 			result = test_controller.set_duty_cycle(channel, duty_cycle)
 		self.assertEqual(cm.exception.code, None)	
 			
 	def test_set_duty_cycle_wrong_channel_high(self):
 		'''Invalid channel number '''
-		test_controller = Controller.Controller(debug = True)
-		channel = randint(16, 100)
-		duty_cycle = randint(0, 4095)
+		test_controller = Controller.Controller(debug = self.debug)
+		channel = random.randint(16, 100)
+		duty_cycle = random.randint(0, 4095)
 		with self.assertRaises(SystemExit) as cm:
 			result = test_controller.set_duty_cycle(channel, duty_cycle)
 		self.assertEqual(cm.exception.code, None)	
 			
 	def test_set_duty_cycle_wrong_channel_low(self):
 		'''Invalid channel number '''
-		test_controller = Controller.Controller(debug = True)
-		channel = randint(-5, -1)
-		duty_cycle = randint(0, 4095)
+		test_controller = Controller.Controller(debug = self.debug)
+		channel = random.randint(-5, -1)
+		duty_cycle = random.randint(0, 4095)
 		with self.assertRaises(SystemExit) as cm:
 			result = test_controller.set_duty_cycle(channel, duty_cycle)
-		self.assertEqual(cm.exception.code, None)			
+		self.assertEqual(cm.exception.code, None)
+
+	def test_set_duty_cycle_float_value(self):
+		'''Pass a float as Duty cycle 12-bits instead of an integer'''
+		test_controller = Controller.Controller(debug = self.debug)
+		channel = 15
+		duty_cycle = random.uniform(1,2)
+		written_values = test_controller.set_duty_cycle(channel, duty_cycle)
+		result = [written_values[0]+256*written_values[1],written_values[2]+256*written_values[3]] #duty_cycle = (Low byte) + (High byte)*256
+		expected = [0,int(duty_cycle)]
+		self.assertEqual(result,expected)
+		test_controller.set_duty_cycle(channel, 0)	
 
 			
 if __name__ == '__main__':
