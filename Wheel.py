@@ -25,9 +25,9 @@ class Rear_Wheel(object):
 	def speed_converter(self, speed):
 		'''Converts speed from 0-100 to 0-4095'''
 		if 0 <= speed <= 100:
-			value = 40.95*speed
+			duty_cycle = 40.95*speed
 		else:
-			value = 0
+			duty_cycle = 0
 			print ('Speed values must be between 0 and 100')
 			
 			if self.debug:
@@ -35,33 +35,33 @@ class Rear_Wheel(object):
 			GPIO.cleanup()
 			exit()
 			
-		value = int(value)
+		duty_cycle = int(duty_cycle)
 		if self.debug:
-			print (debug_info, 'Speed ', speed, 'converted to ', value)
+			print (debug_info, 'Speed ', speed, 'converted to ', duty_cycle)
 		
-		return value		
+		return duty_cycle		
 
 		
 		
 	def forward(self, speed):
 		'''Sets the movement of the wheel forwards to a given speed'''
 		GPIO.output(self.pin, False)
-		value = self.speed_converter(speed)
-		self.controller.set_value(self.PCAchannel, value)
+		duty_cycle = self.speed_converter(speed)
+		self.controller.set_duty_cycle(self.PCAchannel, duty_cycle)
 		if self.debug:
 			print (debug_info, 'Wheel connected to pin', self.pin, 'in the Raspberry Pi GPIO and channel', self.PCAchannel,'in the PCA9685 is moving forwards at speed', speed)
 		
 	def backwards(self, speed):
 		'''Sets the movement of the wheel backwards to a given speed'''
 		GPIO.output(self.pin, True)
-		value = self.speed_converter(speed)
-		self.controller.set_value(self.PCAchannel, value)
+		duty_cycle = self.speed_converter(speed)
+		self.controller.set_duty_cycle(self.PCAchannel, duty_cycle)
 		if self.debug:
 			print (debug_info, 'Wheel connected to pin', self.pin, 'in the Raspberry Pi GPIO and channel', self.PCAchannel,'in the PCA9685 is moving backwards at speed', speed)
 		
 	def stop(self):	
 		'''Stops the wheel'''	
-		self.controller.set_value(self.PCAchannel, 0)		
+		self.controller.set_duty_cycle(self.PCAchannel, 0)		
 		if self.debug:
 			print (debug_info, 'Wheel connected to pin', self.pin, 'in the Raspberry Pi GPIO and channel', self.PCAchannel,'in the PCA9685 has stopped')
 		

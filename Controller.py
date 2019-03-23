@@ -23,17 +23,18 @@ class Controller(object):
 			print (debug_info, 'Debug set off')
 
 
-	def set_value(self, channel, value):
-		'''Write the given value to a specific channel for the 12-bit PWM'''
+	def set_duty_cycle(self, channel, duty_cycle):
+		'''Write the given duty_cycle to a specific channel for the 12-bit PWM'''
 		
-		if 0 <= value <= 4095:
+		if 0 <= duty_cycle <= 4095:
+			duty_cycle = int(duty_cycle)
 		
 			reg = self.get_register(channel)
 
 			self.bus.write_byte_data(self.address, reg[0], 0 & 0xFF) #Low byte 
 			self.bus.write_byte_data(self.address, reg[1], 0 >> 8) #High byte
-			self.bus.write_byte_data(self.address, reg[2], value & 0xFF) #Low byte 
-			self.bus.write_byte_data(self.address, reg[3], value >> 8) #High byte
+			self.bus.write_byte_data(self.address, reg[2], duty_cycle & 0xFF) #Low byte 
+			self.bus.write_byte_data(self.address, reg[3], duty_cycle >> 8) #High byte
 			
 			written_values = [None]*4
 			
@@ -48,10 +49,10 @@ class Controller(object):
 			return written_values
 		
 		else:
-			print ('PWM value must be a number between 0 and 4095')
+			print ('PWM duty cycle must be a number between 0 and 4095')
 			print ('Stopping all channels')
 			for channel in range(0, 15):
-				self.set_value(channel, 0)
+				self.set_duty_cycle(channel, 0)
 			sys.exit()
 		
 	def get_register(self, channel):
@@ -65,7 +66,7 @@ class Controller(object):
 			print ('Channel must be a value between 0 and 15')
 			print ('Stopping all channels')
 			for channel in range(0, 15):
-				self.set_value(channel, 0)
+				self.set_duty_cycle(channel, 0)
 			sys.exit()
 			
 				
@@ -73,24 +74,24 @@ class Controller(object):
 		
 		
 def test_controller():
-	min_value = 0 #Values from 0 to 4095
-	max_value = 300 #Values from 0 to 4095
+	min_duty_cycle = 0 #Values from 0 to 4095
+	max_duty_cycle = 300 #Values from 0 to 4095
 	
 	start_channel = 15 #Values from 0 to 15
 	end_channel = 16 #Values from 0 to 15
 	
-	print ('Changing values from ', min_value, ' to ', max_value, ' for channels ', start_channel, ' to ', end_channel)
+	print ('Changing duty cycle from ', min_duty_cycle, ' to ', max_duty_cycle, ' for channels ', start_channel, ' to ', end_channel)
 	
 	wheel = Controller(debug = debug)
 	try:
 		for channel in range(start_channel, end_channel+1):
-			for i in range(min_value,max_value+1):
-				wheel.set_value(channel, i)
-			wheel.set_value(channel, 0)	
+			for i in range(min_duty_cycle,max_duty_cycle+1):
+				wheel.set_duty_cycle(channel, i)
+			wheel.set_duty_cycle(channel, 0)	
 			
 	except KeyboardInterrupt:
-		print ('Setting the value back to 0 to exit')
-		wheel.set_value(channel, 0)
+		print ('Setting the duty cycle back to 0 to exit')
+		wheel.set_duty_cycle(channel, 0)
 		print ('Test interrupted by user')
 
 
