@@ -21,6 +21,8 @@ class Rear_Wheel(object):
 		
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(self.pin, GPIO.OUT)
+		GPIO.output(self.pin, True)
+
 		
 	def speed_converter(self, speed):
 		'''Converts speed from 0-100 to 0-4095'''

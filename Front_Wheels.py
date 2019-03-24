@@ -15,11 +15,14 @@ class Front_Wheels(object):
 	min_pulse_width = 600 #microseconds
 	max_pulse_width = 2400 #microseconds
 	frequency = 60 #Hz
-	turning_angle = 45
+	max_range = 90 #degrees
+	turning_angle = 45 #degrees
 
-	min_duty_cycle = min_pulse_width / 1000000 * frequency
-	max_duty_cycle = max_pulse_width / 1000000 * frequency
+	min_duty_cycle = float(min_pulse_width) / 1000000 * frequency
+	max_duty_cycle = float(max_pulse_width) / 1000000 * frequency
 	
+
+
 	def __init__(self, PCAchannel, offset = 0, debug = False):
 		self.debug = debug
 		self.controller = Controller(self.controller_address)
@@ -28,7 +31,8 @@ class Front_Wheels(object):
 		
 	def angle_converter(self, angle):
 		if -90 <= angle <= 90:
-			duty_cycle = (self.max_duty_cycle-self.min_duty_cycle)/180*angle+self.max_duty_cycle-(self.max_duty_cycle-self.min_duty_cycle)/2
+			duty_cycle = (self.max_duty_cycle - self.min_duty_cycle) / (2 * self.max_range) * angle + \
+				self.max_duty_cycle - (self.max_duty_cycle - self.min_duty_cycle) / 2
 			duty_cycle = int(duty_cycle*4096)
 			if self.debug:
 				print (debug_info, 'Angle ', angle, 'converted to ', duty_cycle)
@@ -69,9 +73,10 @@ class Front_Wheels(object):
 
 
 
-					
-if __name__ == '__main__':
-	debug = True
+
+
+def test_wheels():
+	debug = False
 	PCAchannel = 0
 
 	front_wheels = Front_Wheels(PCAchannel, debug = debug)
@@ -108,6 +113,37 @@ if __name__ == '__main__':
 		print (' Test interrupted by user')
 		front_wheels.turn_straight()
 		print ('Going back to straight wheels')
+
+
+def find_zero():
+	debug = False
+	PCAchannel = 0
+
+	front_wheels = Front_Wheels(PCAchannel, debug = debug)
+	try:
+		for i in range (-30, 30):
+			front_wheels.turn(i)
+			print('Turning to ', i)
+			time.sleep(0.01)
+
+		for i in range (-9, -6):
+			front_wheels.turn(i)
+			print('Turning to ', i)
+			time.sleep(3)
+
+
+	except KeyboardInterrupt:
+		print (' Test interrupted by user')
+		for i in range (-9, -6):
+			front_wheels.turn(i)
+			print('Turning to ', i)
+			time.sleep(3)
+		print ('Going back to straight wheels')
+
+					
+if __name__ == '__main__':
+
+	find_zero()
 
 
 

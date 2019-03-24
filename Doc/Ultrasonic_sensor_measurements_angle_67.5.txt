@@ -1,0 +1,1 @@
+Settle time (s),Measured Distance (cm), Error to real distance = 100 cm
